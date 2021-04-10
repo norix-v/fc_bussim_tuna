@@ -1,0 +1,46 @@
+FC Cartridge bus simulator "tuna"
+Copyright (C) 2021 Norix (NX labs)
+
+========================
+全体的なライセンスの要約
+========================
+
+現状のまま提供され、作者はそれらに対して一切の責任を負いません。
+
+==================
+ライセンスについて
+==================
+
+firmware、tuna_canディレクトリ以下のソースコードライセンスはGPL2です。
+(使用しているライブラリは除外。各ライブラリは個別にライセンスされています)
+GPL2の詳細についてはgpl-2.0.txtを参照してください。
+
+==================
+ライブラリについて
+==================
+
+以下は使用したライブラリです。
+各ライブラリのライセンスについてはソースコードのディレクトリを参照してください。
+
+Raspberry Pi Picoのファームウェアで使用したライブラリ
+  pico-sdk
+  Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
+
+  TinyUSB
+  Copyright (c) 2019 Ha Thach (tinyusb.org)
+
+tuna_canで使用したライブラリ(LGPL3.0)
+  LibUSBDotNet
+  Copyright (c) 2006-2010 Travis Robinson. All rights reserved.
+
+=======================
+KiCadのファイルについて
+=======================
+
+schematicディレクトリ以下のファイルはOSHWとします。
+改変版を頒布する場合は、頒布物が改変版であることが分かるよう”xxx edition"などの
+ように名称に付加してください。
+また、改変版の頒布には出典を明示してください。
+
+使用したRaspberry Pi Picoのシンボルとフットプリントのオリジナルはこちらです。
+https://github.com/HeadBoffin/RP_Silicon_KiCad

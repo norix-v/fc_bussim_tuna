@@ -1,0 +1,99 @@
+;
+; FC Cartridge bus simulator "tuna"
+;
+; Copyrighte (C) 2021 Norix (NX labs)
+;
+; License: GPL2 (see gpl-2.0.txt)
+;
+
+; defines
+.define		IRQ_RW		4
+.define		IRQ_ROMSEL	5
+.define		IRQ_PHI2	6
+.define		IRQ_END		7
+
+.define		SET_RD_ASSERT	0x02
+.define		SET_WR_ASSERT	0x01
+.define		SET_DISABLE		0x03
+
+;
+; bussim process
+;
+; manual pull / auto push
+; 70 cycles/1 loop (if no fifo stall)
+;
+.program	bussim_pio_proc
+.side_set	2 opt
+.wrap_target
+		mov		osr, ~null	side 0			;  1
+		out		pindirs, 8	side 0			;  2
+		pull	block						;  3
+		out		pins, 8		side 0	[2]		;  4- 5  6
+		nop					side 2	[1]		;  7- 8				ADDR_L
+		out		pins, 8		side 0	[2]		;  9-10 11
+		nop					side 1	[1]		; 12-13				ADDR_H
+		out		pins, 8		side 0	[1]		; 14-15
+		out		pindirs, 8	side 0			; 16
+		pull	block						; 17
+		out		exec, 16					; 18-19				IRQ_RW irq or nop
+		set		x, 6						; 20
+wait0:
+		jmp		x--, wait0					; 21-27(21+6)
+		out		exec, 16					; 28-29				IRQ_PHI2 irq or nop
+		pull	block						; 30
+		out		exec, 16					; 31-32				ROMSEL irq or nop
+		out		exec, 16					; 33-34				SET_RD_ASSERT/SET_WR_ASSERT or nop
+		set		x, 31						; 35
+wait1:
+		jmp		x--, wait1					; 36-67(36+31)
+		irq		set IRQ_END					; 68
+		in		pins, 32					; 69				fetch bus data
+		set		pins, SET_DISABLE side 0	; 70
+.wrap
+
+;
+; PRG R/W state machine
+;
+.program	bussim_pio_cpurw
+.side_set 1 opt
+.wrap_target
+		wait	1 irq IRQ_RW	side 1		; 20				RW=H
+		wait	1 irq IRQ_END	side 0	[1]	; 21-69 70
+		nop						side 0	[3]	;  1- 2  3  4
+.wrap
+
+;
+; PRG /ROMSEL state machine
+;
+.program	bussim_pio_romsel
+.side_set 1 opt
+.wrap_target
+		wait	1 irq IRQ_ROMSEL side 1		; 33				ROMSEL=H
+		wait	1 irq IRQ_END	side 0	[1]	; 34-69 70
+		nop						side 0		;  1
+.wrap
+
+;
+; PHI2 state machine
+;
+.program	bussim_pio_phi2
+.side_set 1 opt
+.wrap_target
+		wait	1 irq IRQ_PHI2	side 0	[1]	; 30-31				PHI2=L
+		wait	1 irq IRQ_END	side 1		; 32-69
+		nop						side 0		; 70
+.wrap
+
+;
+; out exec codes
+;
+.program	bussim_pio_codes
+.side_set	2 opt
+		nop									; 0
+		irq		set IRQ_RW					; 1
+		irq		set IRQ_ROMSEL				; 2
+		irq		set IRQ_PHI2				; 3
+		set		pins, SET_WR_ASSERT			; 4
+		set		pins, SET_RD_ASSERT			; 5
+		set		pins, SET_DISABLE			; 6
+

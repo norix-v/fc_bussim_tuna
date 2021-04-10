@@ -1,0 +1,13 @@
+============
+How to build
+============
+
+Explanation of how to set up the build environment will be omitted.
+
+See
+https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf
+for more information.
+
+Since pico-sdk is included as a git submodule, it is not necessary to set PICO_SDK_PATH. may be.
+
+Good luck!
