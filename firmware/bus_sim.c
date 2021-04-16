@@ -640,9 +640,9 @@ void	kazzo_cpu_write_6502(uint16_t address, uint16_t length, const uint8_t *data
 void	kazzo_cpu_write_flash(uint16_t address, uint16_t length, const uint8_t *data)
 {
 	while (length != 0) {
-		if (*data != 0xFF) {	// speed up
+//		if (*data != 0xFF) {	// speed up
 			bussim_cpu_write_clkfix(address, *data);
-		}
+//		}
 		++data;
 		++address;
 		--length;
@@ -686,9 +686,9 @@ void	kazzo_ppu_write(uint16_t address, uint16_t length, const uint8_t *data)
 void	kazzo_ppu_write_flash(uint16_t address, uint16_t length, const uint8_t *data)
 {
 	while(length != 0){
-		if (*data != 0xFF) {	// speed up
+//		if (*data != 0xFF) {	// speed up
 			bussim_ppu_write(address, *data);
-		}
+//		}
 		++data;
 		++address;
 		--length;
